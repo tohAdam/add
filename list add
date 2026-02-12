@@ -1,0 +1,144 @@
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  Alert
+} from 'react-native';
+
+export default function App() {
+
+  const [name, setName] = useState('');
+  const [list, setList] = useState([]);
+  const [error, setError] = useState('');
+
+  const addItem = () => {
+    if (!name.trim()) {
+      setError("Name cannot be empty");
+      Alert.alert(
+        "⚠️ Warning",
+        "Please enter a name before adding.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
+    setList([...list, { id: Date.now().toString(), value: name }]);
+    setName('');
+    setError('');
+  };
+
+  return (
+    <View style={styles.container}>
+
+      <View style={styles.card}>
+
+        <View style={styles.sign}>
+          <Text style={styles.signText}>Pingay, Adamusa</Text>
+        </View>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Enter name"
+          value={name}
+          onChangeText={(text) => {
+            setName(text);
+            if (error) setError('');
+          }}
+        />
+
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+        <TouchableOpacity style={styles.button} onPress={addItem}>
+          <Text style={styles.buttonText}>+ ADD</Text>
+        </TouchableOpacity>
+
+        <View style={styles.flaty}>
+          <FlatList
+            data={list}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.listItem}>
+                <Text style={styles.listText}>{item.value}</Text>
+              </View>
+            )}
+          />
+        </View>
+
+      </View>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingTop: 40,
+  },
+  card: {
+    width: 300,
+    padding: 15,
+    backgroundColor: '#F4F6F8',
+    borderRadius: 10,
+    elevation: 4,
+  },
+  sign: {
+    height: 50,
+    backgroundColor: '#2A9D8F',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+    borderRadius: 6,
+  },
+  signText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  input: {
+    height: 45,
+    borderWidth: 2,
+    borderColor: '#B0BEC5',
+    paddingHorizontal: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 6,
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 5,
+    fontSize: 12,
+  },
+  button: {
+    marginTop: 20,
+    backgroundColor: '#2979FF',
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderRadius: 6,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  flaty: {
+    marginTop: 20,
+    maxHeight: 250,
+  },
+  listItem: {
+    backgroundColor: '#457B9D',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  listText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+});
