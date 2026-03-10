@@ -1,0 +1,218 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity
+} from 'react-native';
+
+export default function Quiz() {
+
+  const [nameList, setNameList] = useState([
+    'Alpha','Bravo','Charlie','Delta', 'Echo',
+    'Foxtrot','Golf','Hotel','India', 'Juliet', 
+    'Kilo', 'Lima', 'Mike', 'November', 'Oscar', 
+    'Papa', 'Quebec', 'Romeo', 'Sierra', 'Tango', 
+    'Uniform', 'Victor', 'Whiskey', 'X-ray', 'Yankee', 'Zulu'
+  ]);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [screen, setScreen] = useState('home');
+  const [newName, setNewName] = useState('');
+
+  // Colors array for names
+  const colors = [
+    '#FF6B6B', '#6BCB77', '#4D96FF', '#FFD93D', '#845EC2',
+    '#FF9671', '#00C9A7', '#FF6F91', '#FFC75F', '#2C73D2'
+  ];
+
+  const filteredData = nameList.filter(item =>
+    item.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const addName = () => {
+    if(newName.trim() !== ''){
+      setNameList([...nameList, newName]);
+      setNewName('');
+      setScreen('home');
+    }
+  };
+
+  const renderItem = ({ item, index }) => {
+    const color = colors[index % colors.length]; // cycle through colors
+    return (
+      <View style={styles.row}>
+        <Text style={[styles.name, { color }]}>{item}</Text>
+      </View>
+    );
+  };
+
+  // Add Name Screen
+  if(screen === 'add'){
+    return(
+      <View style={styles.container}>
+
+        <View style={styles.headerBox}>
+          <Text style={styles.headerLabel}>Pingay, Adamusa U.</Text>
+          <TouchableOpacity onPress={() => setScreen('home')}>
+            <Text style={styles.back}>{'<'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.enterTitle}>Enter Name</Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          value={newName}
+          onChangeText={setNewName}
+        />
+
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.saveBtn} onPress={addName}>
+            <Text style={styles.btnText}>SAVE</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.cancelBtn}
+            onPress={()=>setScreen('home')}
+          >
+            <Text style={styles.btnText}>CANCEL</Text>
+          </TouchableOpacity>
+        </View>
+
+      </View>
+    );
+  }
+
+  // Home Screen
+  return (
+    <View style={styles.container}>
+
+      <View style={styles.headerBox}>
+        <Text style={styles.headerLabel}>
+          Pingay, Adamusa U.
+        </Text>
+
+        <TouchableOpacity onPress={()=>setScreen('add')}>
+          <Text style={styles.plus}>+</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search..."
+        placeholderTextColor="#999"
+        onChangeText={setSearchQuery}
+      />
+
+      <FlatList
+        data={filteredData}
+        renderItem={renderItem}
+        keyExtractor={(item,index)=>index.toString()}
+      />
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+
+  container:{
+    flex:1,
+    backgroundColor:'#F8F9FB',
+    paddingTop:50
+  },
+
+  headerBox:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    backgroundColor:'#0018F5',
+    paddingVertical:20,
+    paddingHorizontal:20
+  },
+
+  headerLabel:{
+    color:'#FFFFFF',
+    fontSize:25,
+    fontWeight:'bold'
+  },
+
+  plus:{
+    fontSize:34,
+    color:'#FFFFFF',
+    fontWeight:'bold'
+  },
+
+  back:{
+    fontSize:28,
+    color:'#FFFFFF',
+    fontWeight:'bold'
+  },
+
+  searchInput:{
+    backgroundColor:'#FFFFFF',
+    margin:15,
+    padding:12,
+    borderRadius:10,
+    borderWidth:1,
+    borderColor:'#DDD'
+  },
+
+  row:{
+    backgroundColor:'#FFFFFF',
+    padding:18,
+    borderBottomWidth:1,
+    borderColor:'#EEE'
+  },
+
+  name:{
+    fontSize:18,
+    fontWeight:'500'
+  },
+
+  enterTitle:{
+    fontSize:22,
+    marginTop:30,
+    marginLeft:20,
+    marginBottom:10
+  },
+
+  input:{
+    borderWidth:1,
+    borderColor:'#CCC',
+    marginHorizontal:20,
+    padding:12,
+    borderRadius:8
+  },
+
+  buttonRow:{
+    flexDirection:'row',
+    justifyContent:'space-around',
+    marginTop:30
+  },
+
+  saveBtn:{
+    backgroundColor:'#4A90E2',
+    paddingVertical:12,
+    paddingHorizontal:25,
+    borderRadius:8
+  },
+
+  cancelBtn:{
+    backgroundColor:'#999',
+    paddingVertical:12,
+    paddingHorizontal:25,
+    borderRadius:8
+  },
+
+  btnText:{
+    color:'#FFFFFF',
+    fontWeight:'bold',
+    fontSize:16
+  }
+
+});
